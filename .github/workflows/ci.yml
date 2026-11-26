@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   tests:
+    # Le dépôt modèle n'a pas d'app à tester : ses garde-fous sont testés par modele.yml.
+    if: github.repository != 'une-app-par-mois/app-template'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
