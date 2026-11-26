@@ -48,6 +48,16 @@ verifier "pre-push : envoi vers main refusé" 1 pre_push "refs/heads/main"
 # scripts/test.sh échoue tant qu'il n'est pas défini (pas de faux vert)
 verifier "test.sh non défini : échec" 1 scripts/test.sh
 
+# Mode de CI : les workflows lancés par une PR ne tournent que sur les PR vers main
+pr_vers_main() { # le bloc « pull_request: » est suivi de « branches: [main] »
+  grep -A1 '^  pull_request:' "$1" | grep -q 'branches: \[main\]'
+}
+for workflow in .github/workflows/*.yml; do
+  if grep -q '^  pull_request:' "$workflow"; then
+    verifier "$workflow : PR vers main seulement" 0 pr_vers_main "$workflow"
+  fi
+done
+
 # Réglages de Claude Code : JSON valide
 verifier ".claude/settings.json valide" 0 jq empty .claude/settings.json
 

@@ -1,6 +1,8 @@
 ## Ticket
 
-[`docs/tickets/NNN-intitule.md`] · Fonctionnalités : [F-xx] · Zone sensible : [oui | non]
+[`docs/tickets/NNN-intitule.md`] · Fonctionnalités : [F-xx] · Zone sensible : [oui | non] · Vise : [`main` | `groupe/…`]
+
+PR d'un groupe ou d'un jalon vers `main` : lister ici les tickets et leurs PR ; la CI complète tourne ici.
 
 ## Ce que change cette pull request
 
@@ -14,7 +16,7 @@
 
 - [ ] Chaque critère d'acceptation a son test, ou sa vérification manuelle décrite.
 - [ ] Le test a été vu en échec avant le code ; un bogue corrigé a son test qui le reproduit.
-- [ ] `./scripts/test.sh` passe en local ; la CI est verte.
+- [ ] `./scripts/test.sh` passe en local ; la CI est verte (PR vers `main` seulement).
 - [ ] `/code-review` lancé ; `/security-review` en zone sensible (résumé ci-dessous).
 - [ ] Aucun secret, aucune donnée réelle, aucun appel réseau ajouté ; dépendance nouvelle validée, ou aucune.
 - [ ] Interface touchée : comparée à la maquette, écarts listés — ou sans objet.

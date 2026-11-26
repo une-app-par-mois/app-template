@@ -59,13 +59,27 @@ Ce fichier est lu par Claude Code à chaque session. Il fixe le contexte et les 
 
 Pose chaque décision sous forme de choix (options, avec ta recommandation en premier).
 
+## Mode de CI
+
+Mode de ce projet : **par jalon** — [par ticket | par groupe | par jalon], choisi au cadrage. Un changement de mode est une décision datée du porteur, notée ici ; jamais une dérogation.
+
+| Mode | La PR du ticket vise | La CI tourne sur |
+| --- | --- | --- |
+| Par ticket | `main` | chaque PR de ticket |
+| Par groupe | `groupe/<n°>-<n°>-<intitulé>` (2 à 4 tickets liés, décidés au plan) | la PR du groupe vers `main` |
+| Par jalon | `groupe/jalon-<n>-<intitulé>` (tous les tickets du jalon) | la PR du jalon vers `main`, une fois le dernier ticket fusionné |
+
+La branche de groupe ou de jalon part de `main`. Les workflows ne tournent que sur les PR vers `main`. En zone sensible, le ticket reste dans son groupe, avec `/security-review` et la relecture du porteur avant sa fusion dans le groupe.
+
 ## Cycle d'un ticket
 
-1. **Plan validé** (ci-dessus), puis une branche `ticket/<numéro>-<intitulé-court>`. Jamais de commit sur `main`.
+1. **Plan validé** (ci-dessus), puis une branche `ticket/<numéro>-<intitulé-court>`, partie de `main` (mode par ticket) ou de la branche de groupe. Jamais de commit sur `main`.
 2. **Test d'abord** : écrire le test, le lancer, le voir échouer, puis coder jusqu'au vert. Un bogue corrigé commence par un test qui le reproduit.
 3. **Vérifications** : `./scripts/test.sh` passe ; `/code-review` lancé, et `/security-review` en zone sensible.
 4. **PR** avec le modèle : ce qui change, tests, zone sensible oui/non, Definition of Done cochée, **ce qui n'a pas été vérifié**.
-5. **Fusion par l'IA** seulement quand **tous les travaux de la CI sont verts** sur le dernier commit et que la branche contient le `main` actuel (sinon `main` y est fusionné, jamais de rebase d'une branche poussée) : `gh pr merge <n> --squash --match-head-commit <sha>`. En zone sensible : fusion seulement après la relecture du porteur. Jamais `--admin`, jamais de suppression de branche.
+5. **Fusion par l'IA** (jamais `--admin`, jamais de suppression de branche ; en zone sensible, seulement après la relecture du porteur) :
+   - **vers une branche de groupe** : après `./scripts/test.sh` et `/code-review`, sans CI, en gardant les commits pour que gitleaks les parcoure tous : `gh pr merge <n> --merge --match-head-commit <sha>` ;
+   - **vers `main`** (ticket seul ou groupe complet) : seulement quand **tous les travaux de la CI sont verts** sur le dernier commit et que la branche contient le `main` actuel (`git merge-base --is-ancestor origin/main <sha>` ; sinon `main` y est fusionné, jamais de rebase d'une branche poussée) : `gh pr merge <n> --squash --match-head-commit <sha>`. Un échec se corrige sur une branche de ticket ou sur la branche de groupe, puis la CI repart.
 6. **Journal** : `ETAT.md` à jour ; entrée dans `PROMPTS.md` si l'étape est importante.
 
 Messages de commit en français, « `Domaine : ce qui change` », 72 caractères au plus en première ligne (vérifié par le hook `commit-msg`).

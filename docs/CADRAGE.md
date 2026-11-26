@@ -53,6 +53,7 @@ Les parties du code où une erreur touche les données, la sécurité ou l'exact
 
 - **Format** : [PWA hors ligne | desktop | Android | CLI | extension]
 - **Stack envisagée** : [ ] — pourquoi ce choix : [ ]
+- **Mode de CI** : [par ticket | par groupe | par jalon] — par défaut par jalon ; par ticket si la CI est courte et qu'on veut chaque fusion vérifiée (`CLAUDE.md`, « Mode de CI »)
 
 ## Critères de réussite
 

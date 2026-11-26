@@ -6,14 +6,14 @@ Dernière mise à jour : [AAAA-MM-JJ]
 
 ## En cours
 
-[Ticket en cours et son état, ou « aucun ».]
+[Jalon et branche de groupe ; ticket en cours et son état, ou « aucun ».]
 
 ## Prochaines étapes
 
 Mise en route d'une nouvelle app (à retirer une fois faites) :
 
 1. Supprimer `.github/workflows/modele.yml` et `scripts/tests-modele.sh` (tests du modèle seulement).
-2. Remplir `docs/CADRAGE.md` (fonctionnalités, glossaire, données, zones sensibles), puis le faire valider.
+2. Remplir `docs/CADRAGE.md` (fonctionnalités, glossaire, données, zones sensibles, mode de CI), puis le faire valider ; reporter le mode dans `CLAUDE.md`.
 3. Charte et maquettes dans `design/`, validées avant le code.
 4. Compléter `CLAUDE.md` (contexte, commandes), `scripts/test.sh`, `scripts/build.sh`, la mise en place de la stack dans les workflows et `.github/dependabot.yml`.
 5. Activer les hooks : `./scripts/setup-hooks.sh` (gitleaks requis sur le poste).
