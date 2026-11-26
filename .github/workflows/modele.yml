@@ -5,7 +5,10 @@ name: Modèle
 on:
   push:
     branches: [main]
+  # PR vers main seulement : les PR vers une branche de groupe ou de jalon ne lancent rien
+  # (mode de CI, CLAUDE.md).
   pull_request:
+    branches: [main]
 
 permissions:
   contents: read

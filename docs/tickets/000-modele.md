@@ -1,6 +1,6 @@
 # NNN — [Intitulé]
 
-Statut : à faire | en cours | fait · Zone sensible : oui | non · Trivial : oui | non
+Statut : à faire | en cours | fusionné dans le groupe | fait · Jalon : [n] · Zone sensible : oui | non · Trivial : oui | non
 
 ## Contexte
 
