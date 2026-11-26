@@ -77,7 +77,7 @@ Codée avec Claude et Claude Code, en [X] heures, ticket par ticket. Cadrage dan
 ./scripts/test.sh
 ```
 
-Les règles du projet pour l'IA sont dans [`CLAUDE.md`](CLAUDE.md), ses garde-fous dans [`.claude/settings.json`](.claude/settings.json), les conventions et la Definition of Done dans [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md).
+Les règles du projet pour l'IA sont dans [`CLAUDE.md`](CLAUDE.md), ses garde-fous dans [`.claude/settings.json`](.claude/settings.json), les conventions et la Definition of Done dans [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md), les mots de la méthode dans [`docs/GLOSSAIRE-METHODE.md`](docs/GLOSSAIRE-METHODE.md).
 
 ## Licence
 
