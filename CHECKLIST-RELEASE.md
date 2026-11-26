@@ -11,7 +11,8 @@
 ## Sécurité
 - [ ] Workflow `security.yml` au vert (Semgrep, gitleaks, dépendances).
 - [ ] CodeQL sans alerte ouverte de gravité élevée ou critique.
-- [ ] Audit IA en posture d'attaquant fait dans une session séparée.
+- [ ] Audit IA en posture d'attaquant fait dans une session séparée (ou un sous-agent qui n'a pas écrit le code), avec le prompt de `AUDIT.md`.
+- [ ] Les zones sensibles du cadrage ont été relues par le porteur.
 - [ ] `AUDIT.md` à jour : problèmes, corrections, limites.
 - [ ] Chaque permission demandée est justifiée dans le README.
 
@@ -21,7 +22,8 @@
 
 ## Documentation
 - [ ] README : installation, vérification SHA-256, utilisation, données et vie privée.
-- [ ] `PROMPTS.md` complété, bilan chiffré compris.
+- [ ] `PROMPTS.md` complété, bilan chiffré compris ; `ETAT.md` à jour.
+- [ ] Idées écartées notées dans `docs/IDEES.md`.
 - [ ] `design/` : charte et maquettes à jour.
 - [ ] Version mise à jour dans le code et dans `CHANGELOG.md`.
 

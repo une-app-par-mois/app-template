@@ -1,0 +1,20 @@
+# Tests des garde-fous du modèle (hooks, réglages de Claude Code), dans app-template seulement.
+# Dans une nouvelle app : supprimer ce fichier et scripts/tests-modele.sh.
+name: Modèle
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  garde-fous:
+    if: github.repository == 'une-app-par-mois/app-template'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Tester hooks et réglages
+        run: ./scripts/tests-modele.sh

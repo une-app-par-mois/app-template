@@ -1,13 +1,29 @@
+## Ticket
+
+[`docs/tickets/NNN-intitule.md`] · Fonctionnalités : [F-xx] · Zone sensible : [oui | non]
+
 ## Ce que change cette pull request
 
 [ ]
 
-## Vérifications
+## Tests
 
-- [ ] Les tests passent, et chaque nouvelle fonctionnalité a son test.
-- [ ] Aucun secret, aucune donnée réelle, aucun appel réseau ajouté.
-- [ ] Nouvelle dépendance : justifiée (raison, licence, maintenance) — ou aucune.
-- [ ] J'ai relu le diff et je peux l'expliquer.
+[Tests ajoutés ou modifiés, vus en échec avant le code.]
+
+## Definition of Done (`docs/CONVENTIONS.md`)
+
+- [ ] Chaque critère d'acceptation a son test, ou sa vérification manuelle décrite.
+- [ ] Le test a été vu en échec avant le code ; un bogue corrigé a son test qui le reproduit.
+- [ ] `./scripts/test.sh` passe en local ; la CI est verte.
+- [ ] `/code-review` lancé ; `/security-review` en zone sensible (résumé ci-dessous).
+- [ ] Aucun secret, aucune donnée réelle, aucun appel réseau ajouté ; dépendance nouvelle validée, ou aucune.
+- [ ] Interface touchée : comparée à la maquette, écarts listés — ou sans objet.
+- [ ] Documents de référence à jour si une décision écrite change.
+- [ ] `ETAT.md` à jour.
+
+## Non vérifié
+
+[Ce qui n'a pas été vérifié, et comment le faire. « Rien » seulement si c'est vrai.]
 
 ## IA
 

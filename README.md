@@ -2,7 +2,7 @@
 
 > [Une phrase : ce qu'elle fait, pour qui.]
 
-**App n°[N] de la série [« Une app par semaine »](https://github.com/une-app-par-semaine)** · 100 % locale · Auditée · Licence MIT
+**App n°[N] de la série [« Une app par mois »](https://github.com/une-app-par-mois)** · 100 % locale · Auditée · Licence MIT
 
 [Capture d'écran ou GIF de démo — données fictives]
 
@@ -39,7 +39,7 @@ Windows (PowerShell) :
 Get-FileHash .\[fichier] -Algorithm SHA256
 ```
 
-L'empreinte affichée doit être identique à celle de `SHA256SUMS.txt`. Chaque fichier est aussi accompagné d'une attestation de provenance GitHub : `gh attestation verify [fichier] --owner une-app-par-semaine`.
+L'empreinte affichée doit être identique à celle de `SHA256SUMS.txt`. Chaque fichier est aussi accompagné d'une attestation de provenance GitHub : `gh attestation verify [fichier] --owner une-app-par-mois`.
 
 ## Utiliser
 
@@ -64,7 +64,7 @@ L'empreinte affichée doit être identique à celle de `SHA256SUMS.txt`. Chaque 
 
 ## Comment elle a été construite
 
-Codée avec Claude et Claude Code, en [X] heures. Cadrage dans [`docs/CADRAGE.md`](docs/CADRAGE.md), prompts clés dans [`PROMPTS.md`](PROMPTS.md), charte et maquettes dans [`design/`](design/).
+Codée avec Claude et Claude Code, en [X] heures, ticket par ticket. Cadrage dans [`docs/CADRAGE.md`](docs/CADRAGE.md), tickets dans [`docs/tickets/`](docs/tickets/), prompts clés dans [`PROMPTS.md`](PROMPTS.md), charte et maquettes dans [`design/`](design/).
 
 [Idée proposée par @auteur, merci !]
 
@@ -72,11 +72,12 @@ Codée avec Claude et Claude Code, en [X] heures. Cadrage dans [`docs/CADRAGE.md
 
 ```bash
 [installer]
+./scripts/setup-hooks.sh   # une fois par poste : hooks Git (gitleaks requis)
 [lancer]
 ./scripts/test.sh
 ```
 
-Les règles du projet pour l'IA sont dans [`CLAUDE.md`](CLAUDE.md).
+Les règles du projet pour l'IA sont dans [`CLAUDE.md`](CLAUDE.md), ses garde-fous dans [`.claude/settings.json`](.claude/settings.json), les conventions et la Definition of Done dans [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md).
 
 ## Licence
 
