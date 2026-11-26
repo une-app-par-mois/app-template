@@ -12,6 +12,7 @@ Ce fichier est lu par Claude Code à chaque session. Il fixe le contexte et les 
 - **Stack** : [langage, framework, version] — dépendances minimales, répandues et maintenues
 - **Design** : `design/CHARTE.md` et `design/maquettes/` (validés avant le code ; la maquette fait foi, rien d'absent n'est ajouté sans validation)
 - **Conventions et Definition of Done** : `docs/CONVENTIONS.md`
+- **Glossaire de la méthode** (ADR, DoD, CI, jalon, zone sensible…) : `docs/GLOSSAIRE-METHODE.md` ; le vocabulaire de l'app est dans le cadrage
 
 ## Commandes
 
