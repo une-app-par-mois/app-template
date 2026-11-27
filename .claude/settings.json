@@ -75,10 +75,13 @@
       "Bash(cargo add*)",
       "Bash(git rebase*)",
       "Bash(git config *)",
-      "Bash(git tag*)"
+      "Bash(git tag*)",
+      "Bash(*release-local.sh*)",
+      "Bash(gh release create*)"
     ],
     "allow": [
       "Bash(./scripts/test.sh*)",
+      "Bash(./scripts/ci-local.sh*)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
