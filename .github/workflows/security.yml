@@ -2,7 +2,7 @@
 # CodeQL n'est pas ici : il est activé en « default setup » dans les réglages de l'organisation.
 # Dépôt public seulement : ses conditions interdisent « any codebase that is not an Open Source
 # Codebase (e.g., code in a private repo in GitHub) » sans licence GitHub Advanced Security.
-# Dépôt privé : ajouter à Semgrep les règles du langage (p/javascript, p/typescript, p/python…).
+# Dépôt privé qui garde GitHub Actions : ajouter ici les règles du langage (p/javascript, p/python…).
 name: Sécurité
 
 on:
@@ -47,6 +47,8 @@ jobs:
       security-events: write # publier les résultats dans l'onglet Security
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # commit de départ facultatif (.semgrep-baseline) : historique nécessaire
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
@@ -55,11 +57,11 @@ jobs:
       - name: Semgrep — règles par défaut et OWASP Top 10
         env:
           SEMGREP_ENABLE_VERSION_CHECK: "0" # --metrics=off ne coupe pas l'appel de version
-        run: >-
-          semgrep scan
-          --config p/default --config p/owasp-top-ten
-          --metrics=off --error
-          --text --sarif-output=semgrep.sarif
+        # Même commit de départ que la CI locale (scripts/semgrep-depart.sh).
+        run: |
+          depart=$(./scripts/semgrep-depart.sh)
+          semgrep scan --config p/default --config p/owasp-top-ten --metrics=off --error \
+            ${depart:+--baseline-commit "$depart"} --text --sarif-output=semgrep.sarif
       - name: Publier les résultats dans l'onglet Security
         # Sur une pull request, le jeton est en lecture seule : les résultats restent dans le journal.
         if: always() && github.event_name != 'pull_request' && hashFiles('semgrep.sarif') != ''

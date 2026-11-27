@@ -98,21 +98,21 @@ etape() { # etape <libellé> <commande...> : lance la commande, note le résulta
 
 # Semgrep d'abord, sur la copie intacte : --baseline-commit refuse des modifications en cours,
 # que test.sh peut laisser. --metrics=off ne coupe pas l'appel de version : la variable le fait.
-# Code hérité avec beaucoup d'alertes : écrire le commit de départ dans .semgrep-baseline ;
-# seules les alertes nouvelles bloquent alors, les anciennes sont listées et auditées (ticket).
-# Après une fusion par --squash, le commit de départ n'est plus un ancêtre : le remplacer par
-# le commit de fusion.
+# Commit de départ facultatif (.semgrep-baseline) : voir scripts/semgrep-depart.sh.
 semgrep_depart=()
-if [ -f .semgrep-baseline ]; then
-  depart=$(tr -d '[:space:]' <.semgrep-baseline)
-  if ! [[ "$depart" =~ ^[0-9a-f]{40}$ ]] || ! git merge-base --is-ancestor "$depart" HEAD; then
-    echo "❌ .semgrep-baseline doit contenir le sha complet d'un ancêtre de HEAD." >&2
-    exit 2
+if depart=$(./scripts/semgrep-depart.sh); then
+  if [ -n "$depart" ]; then
+    semgrep_depart=(--baseline-commit "$depart")
+    if [ "$depart" != "$(git show origin/main:.semgrep-baseline 2>/dev/null | tr -d '[:space:]')" ]; then
+      bilan+=("info   .semgrep-baseline diffère de main : relecture du porteur obligatoire")
+    fi
   fi
-  semgrep_depart=(--baseline-commit "$depart")
+  etape "Analyse statique (Semgrep)" env SEMGREP_ENABLE_VERSION_CHECK=0 semgrep scan \
+    "${regles_semgrep[@]}" --metrics=off --error ${semgrep_depart[@]+"${semgrep_depart[@]}"}
+else
+  bilan+=("ÉCHEC  Analyse statique (Semgrep) : .semgrep-baseline invalide")
+  bloquants_en_echec=$((bloquants_en_echec + 1))
 fi
-etape "Analyse statique (Semgrep)" env SEMGREP_ENABLE_VERSION_CHECK=0 semgrep scan \
-  "${regles_semgrep[@]}" --metrics=off --error ${semgrep_depart[@]+"${semgrep_depart[@]}"}
 etape "Tests (scripts/test.sh)" ./scripts/test.sh
 etape "Secrets dans tout l'historique (gitleaks)" gitleaks git --redact .
 if [ -f package-lock.json ]; then
