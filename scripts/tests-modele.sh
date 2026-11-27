@@ -71,6 +71,27 @@ ordre_semgrep() { # Semgrep avant test.sh, sans appel de version
 }
 verifier "ci-local : Semgrep en premier, sans appel de version" 0 ordre_semgrep
 
+# Scripts d'installation npm, dans un dossier jetable (le script lit le dossier courant).
+si=$(mktemp -d)
+mkdir -p "$si/scripts" && cp scripts/scripts-installation.sh "$si/scripts/"
+cat >"$si/package-lock.json" <<'JSON'
+{"lockfileVersion":3,"packages":{"":{"name":"x"},"node_modules/a":{"version":"1.0.0"},
+"node_modules/b/node_modules/esb":{"version":"2.0.0","hasInstallScript":true}}}
+JSON
+installation() { # installation <contenu de .npmrc> <contenu de la liste revue>
+  (cd "$si" && echo '{}' >package.json && printf '%b' "$1" >.npmrc &&
+    printf '%b' "$2" >scripts/scripts-installation-revus.txt && scripts/scripts-installation.sh 2>/dev/null)
+}
+verifier "scripts-installation : désactivés et paquet revu" 0 installation 'ignore-scripts=true\n' 'esb@2.0.0  raison\n'
+verifier "scripts-installation : .npmrc sans ignore-scripts refusé" 1 installation '' 'esb@2.0.0  raison\n'
+verifier "scripts-installation : dernière valeur false refusée" 1 installation 'ignore-scripts=true\nignore-scripts=false\n' 'esb@2.0.0  raison\n'
+verifier "scripts-installation : paquet non revu refusé" 1 installation 'ignore-scripts=true\n' ''
+verifier "scripts-installation : nouvelle version à revoir" 1 installation 'ignore-scripts=true\n' 'esb@1.9.0  raison\n'
+sans_lock() { (cd "$si" && rm -f package-lock.json && scripts/scripts-installation.sh 2>/dev/null); }
+verifier "scripts-installation : lockfile absent refusé" 1 sans_lock
+rm -rf "$si"
+verifier "modèle : .npmrc fixe ignore-scripts=true" 0 grep -qx 'ignore-scripts=true' .npmrc
+
 # Commit de départ de Semgrep, dans un clone jetable : un commit vide après le commit cloné
 # (qui devient un ancêtre valide), et un commit sans parent (qui n'est pas un ancêtre).
 clone=$(mktemp -d)
