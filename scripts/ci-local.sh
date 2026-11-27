@@ -38,16 +38,21 @@ done
 [ "$publier" = 0 ] || [ -z "$verifier_sha" ] || usage
 
 racine=$(git rev-parse --show-toplevel)
-# Toujours le dépôt de origin, jamais un autre remote (upstream d'un fork, par exemple).
-url=$(git -C "$racine" remote get-url origin)
-if [[ "$url" =~ ^(git@github\.com:|https://github\.com/)([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)$ ]]; then
-  depot=${BASH_REMATCH[2]%.git}
-else
-  echo "❌ origin n'est pas un dépôt GitHub : $url" >&2
-  exit 2
-fi
+# depot_origin : « propriétaire/nom » du remote origin, jamais d'un autre remote (upstream
+# d'un fork, par exemple). Lu seulement pour --publish et --verify.
+depot_origin() {
+  local url
+  url=$(git -C "$racine" remote get-url origin)
+  if [[ "$url" =~ ^(git@github\.com:|ssh://git@github\.com/|https://([^@/]+@)?github\.com/)([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)/?$ ]]; then
+    echo "${BASH_REMATCH[3]%.git}"
+  else
+    echo "❌ origin n'est pas un dépôt GitHub : $url" >&2
+    return 2
+  fi
+}
 
 if [ -n "$verifier_sha" ]; then
+  depot=$(depot_origin)
   etat=$(gh api "repos/$depot/commits/$verifier_sha/statuses" \
     --jq "[.[] | select(.context == \"$CONTEXTE\")][0].state // \"absent\"")
   echo "$CONTEXTE sur $verifier_sha : $etat"
@@ -58,6 +63,9 @@ fi
 sha=$(git -C "$racine" rev-parse HEAD)
 if [ -n "$(git -C "$racine" status --porcelain)" ]; then
   echo "⚠️  Modifications non commitées : elles ne sont pas testées (seul HEAD l'est)." >&2
+fi
+if [ "$publier" = 1 ]; then
+  depot=$(depot_origin)
 fi
 if [ "$publier" = 1 ] && [ -z "$(git -C "$racine" branch -r --contains "$sha" --list 'origin/*')" ]; then
   echo "❌ $sha n'est pas poussé : un statut exige le commit sur GitHub." >&2

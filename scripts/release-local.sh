@@ -18,6 +18,17 @@ if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 racine=$(git rev-parse --show-toplevel)
+url=$(git -C "$racine" remote get-url origin)
+if [[ "$url" =~ ^(git@github\.com:|ssh://git@github\.com/|https://([^@/]+@)?github\.com/)([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)/?$ ]]; then
+  depot=${BASH_REMATCH[3]%.git} # toujours origin, jamais upstream (fork)
+else
+  echo "❌ origin n'est pas un dépôt GitHub : $url" >&2
+  exit 2
+fi
+if [ -z "$(git -C "$racine" ls-remote --tags origin "refs/tags/$tag")" ]; then
+  echo "❌ Le tag $tag n'est pas poussé sur origin." >&2
+  exit 3
+fi
 git -C "$racine" fetch --quiet origin main "refs/tags/$tag:refs/tags/$tag"
 sha=$(git -C "$racine" rev-parse "$tag^{commit}")
 if [ "$sha" != "$(git -C "$racine" rev-parse origin/main)" ]; then
@@ -34,6 +45,12 @@ cd "$dossier"
 
 ./scripts/build.sh
 cd dist
-sha256sum -- * >SHA256SUMS.txt
+mapfile -t fichiers < <(find . -maxdepth 1 -type f ! -name SHA256SUMS.txt -printf '%f\n' | sort)
+if [ "${#fichiers[@]}" -eq 0 ]; then
+  echo "❌ dist/ ne contient aucun fichier à publier (les sous-dossiers sont ignorés)." >&2
+  exit 1
+fi
+sha256sum -- "${fichiers[@]}" >SHA256SUMS.txt
 cat SHA256SUMS.txt
-gh release create "$tag" --title "$tag" --generate-notes --verify-tag -- *
+gh release create "$tag" -R "$depot" --title "$tag" --generate-notes --verify-tag \
+  -- "${fichiers[@]}" SHA256SUMS.txt

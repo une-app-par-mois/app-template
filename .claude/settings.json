@@ -76,7 +76,8 @@
       "Bash(git rebase*)",
       "Bash(git config *)",
       "Bash(git tag*)",
-      "Bash(./scripts/release-local.sh*)"
+      "Bash(*release-local.sh*)",
+      "Bash(gh release create*)"
     ],
     "allow": [
       "Bash(./scripts/test.sh*)",

@@ -54,9 +54,17 @@ verifier "ci-local : option inconnue refusée" 2 scripts/ci-local.sh --force
 verifier "ci-local : --verify sans sha refusé" 2 scripts/ci-local.sh --verify
 verifier "ci-local : --verify d'un nom de branche refusé" 2 scripts/ci-local.sh --verify main
 verifier "ci-local : --publish et --verify exclusifs" 2 scripts/ci-local.sh --publish --verify "$sha_factice"
-verifier "ci-local : échec tant que test.sh n'est pas défini" 1 scripts/ci-local.sh
+# Outils de sécurité remplacés par des doublons qui réussissent : seul test.sh peut échouer.
+doublons=$(mktemp -d)
+for outil in gitleaks semgrep npm pip-audit; do
+  printf '#!/bin/sh\nexit 0\n' >"$doublons/$outil" && chmod +x "$doublons/$outil"
+done
+ci_sans_outils() { PATH="$doublons:$PATH" scripts/ci-local.sh; }
+verifier "ci-local : échec tant que test.sh n'est pas défini" 1 ci_sans_outils
+rm -rf "$doublons"
 verifier "release-local : tag mal formé refusé" 2 scripts/release-local.sh 1.0
-verifier "release-local : tag absent refusé" 128 scripts/release-local.sh v0.0.999
+# Réseau requis : interroge origin.
+verifier "release-local : tag non poussé refusé" 3 scripts/release-local.sh v0.0.999
 
 # Mode de CI : les workflows lancés par une PR ne tournent que sur les PR vers main
 pr_vers_main() { # le bloc « pull_request: » est suivi de « branches: [main] »
