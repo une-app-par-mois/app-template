@@ -3,7 +3,7 @@
 À cocher dans la pull request de release. Rien ne part tant qu'une case reste vide.
 
 ## Code
-- [ ] Tous les tests passent en CI.
+- [ ] Tous les tests passent en CI (CI locale : statut `ci-local` vert sur le commit de `main`).
 - [ ] Les critères de réussite de `docs/CADRAGE.md` sont atteints.
 - [ ] J'ai relu chaque diff depuis la dernière version.
 - [ ] Aucune donnée réelle dans le code, les tests, les captures ou la démo.
@@ -28,7 +28,7 @@
 - [ ] Version mise à jour dans le code et dans `CHANGELOG.md`.
 
 ## Publication
-- [ ] Tag `vX.Y.Z` poussé sur `main` : le workflow `release.yml` construit, calcule les SHA-256 et publie.
+- [ ] Tag `vX.Y.Z` poussé sur `main` : le workflow `release.yml` construit, calcule les SHA-256 et publie (release locale : `./scripts/release-local.sh vX.Y.Z`, sans attestation de provenance ; retirer la phrase sur l'attestation du README).
 - [ ] Release vérifiée : fichiers téléchargés, `sha256sum -c` OK.
 - [ ] Ligne de l'app ajoutée au tableau du README de l'organisation.
 - [ ] Démo vidéo prête (données fictives, mention « Montage et voix générés par IA »).

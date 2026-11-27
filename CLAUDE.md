@@ -19,6 +19,7 @@ Ce fichier est lu par Claude Code à chaque session. Il fixe le contexte et les 
 - Installer : `[commande]`, puis une fois par poste `./scripts/setup-hooks.sh`
 - Lancer en développement : `[commande]`
 - Tests : `./scripts/test.sh` (doit passer avant toute PR)
+- CI locale (si « Lieu de la CI : local ») : `./scripts/ci-local.sh [--publish | --verify <sha>]`
 - Build : `./scripts/build.sh` (doit produire les fichiers à publier dans `dist/`)
 
 ## Avant chaque session
@@ -70,6 +71,12 @@ Mode de ce projet : **par jalon** — [par ticket | par groupe | par jalon], cho
 | Par groupe | `groupe/<n°>-<n°>-<intitulé>` (2 à 4 tickets liés, décidés au plan) | la PR du groupe vers `main` |
 | Par jalon | `groupe/jalon-<n>-<intitulé>` (tous les tickets du jalon) | la PR du jalon vers `main`, une fois le dernier ticket fusionné |
 
+Lieu de la CI : **[GitHub Actions | local]** ; lieu de la release : **[GitHub Actions | local]**, choisis au cadrage.
+
+- **GitHub Actions** : `ci.yml` et `security.yml` tournent sur la PR vers `main`.
+- **Local** (dépôt privé, pour ne pas payer de minutes) : `ci.yml` et `security.yml` sont supprimés ; `./scripts/ci-local.sh --publish` lance les mêmes contrôles sur le dernier commit poussé, dans un worktree propre, et dépose le statut de commit `ci-local` ; `./scripts/ci-local.sh --verify <sha>` le vérifie avant chaque fusion.
+- **Release locale** : `release.yml` est supprimé ; `./scripts/release-local.sh vX.Y.Z` construit sur le poste et publie avec les SHA-256, **sans attestation de provenance**.
+
 La branche de groupe ou de jalon part de `main`. Les workflows ne tournent que sur les PR vers `main`. En zone sensible, le ticket reste dans son groupe, avec `/security-review` et la relecture du porteur avant sa fusion dans le groupe.
 
 ## Cycle d'un ticket
@@ -79,8 +86,8 @@ La branche de groupe ou de jalon part de `main`. Les workflows ne tournent que s
 3. **Vérifications** : `./scripts/test.sh` passe ; `/code-review` lancé, et `/security-review` en zone sensible.
 4. **PR** avec le modèle : ce qui change, tests, zone sensible oui/non, Definition of Done cochée, **ce qui n'a pas été vérifié**.
 5. **Fusion par l'IA** (jamais `--admin`, jamais de suppression de branche ; en zone sensible, seulement après la relecture du porteur) :
-   - **vers une branche de groupe** : après `./scripts/test.sh` et `/code-review`, sans CI, en gardant les commits pour que gitleaks les parcoure tous : `gh pr merge <n> --merge --match-head-commit <sha>` ;
-   - **vers `main`** (ticket seul ou groupe complet) : seulement quand **tous les travaux de la CI sont verts** sur le dernier commit et que la branche contient le `main` actuel (`git merge-base --is-ancestor origin/main <sha>` ; sinon `main` y est fusionné, jamais de rebase d'une branche poussée) : `gh pr merge <n> --squash --match-head-commit <sha>`. Un échec se corrige sur une branche de ticket ou sur la branche de groupe, puis la CI repart.
+   - **vers une branche de groupe** : après `./scripts/test.sh` et `/code-review`, sans CI (CI locale : statut `ci-local` vert vérifié par `--verify`), en gardant les commits pour que gitleaks les parcoure tous : `gh pr merge <n> --merge --match-head-commit <sha>` ;
+   - **vers `main`** (ticket seul ou groupe complet) : seulement quand **tous les travaux de la CI sont verts** sur le dernier commit (CI locale : `./scripts/ci-local.sh --verify <sha>` passe) et que la branche contient le `main` actuel (`git merge-base --is-ancestor origin/main <sha>` ; sinon `main` y est fusionné, jamais de rebase d'une branche poussée) : `gh pr merge <n> --squash --match-head-commit <sha>`. Un échec se corrige sur une branche de ticket ou sur la branche de groupe, puis la CI repart.
 6. **Journal** : `ETAT.md` à jour ; entrée dans `PROMPTS.md` si l'étape est importante.
 
 Messages de commit en français, « `Domaine : ce qui change` », 72 caractères au plus en première ligne (vérifié par le hook `commit-msg`).

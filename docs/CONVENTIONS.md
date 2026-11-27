@@ -23,7 +23,7 @@ Recopiée et cochée dans la PR (le modèle de PR la contient). Une case non coc
 
 1. Chaque critère d'acceptation du ticket est couvert par un test automatisé, ou listé avec la façon de le vérifier à la main.
 2. Le test a été vu en échec avant le code ; un bogue corrigé a son test qui le reproduit.
-3. `./scripts/test.sh` passe en local ; tous les travaux de la CI sont verts sur la PR vers `main` (dans un groupe ou un jalon : sur la PR du groupe).
+3. `./scripts/test.sh` passe en local ; tous les travaux de la CI sont verts sur la PR vers `main` (dans un groupe ou un jalon : sur la PR du groupe) ; en CI locale, statut `ci-local` vert sur le dernier commit.
 4. `/code-review` lancé, remarques traitées ou expliquées ; `/security-review` en plus en zone sensible.
 5. Aucun secret, aucune donnée réelle, aucun appel réseau ajouté ; aucune dépendance sans validation.
 6. Interface touchée : comparée à la maquette, écarts listés dans la PR.

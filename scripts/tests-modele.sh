@@ -48,6 +48,16 @@ verifier "pre-push : envoi vers main refusé" 1 pre_push "refs/heads/main"
 # scripts/test.sh échoue tant qu'il n'est pas défini (pas de faux vert)
 verifier "test.sh non défini : échec" 1 scripts/test.sh
 
+# CI locale : arguments refusés sans rien lancer, et échec tant que test.sh n'est pas défini
+sha_factice=$(printf 'a%.0s' $(seq 1 40))
+verifier "ci-local : option inconnue refusée" 2 scripts/ci-local.sh --force
+verifier "ci-local : --verify sans sha refusé" 2 scripts/ci-local.sh --verify
+verifier "ci-local : --verify d'un nom de branche refusé" 2 scripts/ci-local.sh --verify main
+verifier "ci-local : --publish et --verify exclusifs" 2 scripts/ci-local.sh --publish --verify "$sha_factice"
+verifier "ci-local : échec tant que test.sh n'est pas défini" 1 scripts/ci-local.sh
+verifier "release-local : tag mal formé refusé" 2 scripts/release-local.sh 1.0
+verifier "release-local : tag absent refusé" 128 scripts/release-local.sh v0.0.999
+
 # Mode de CI : les workflows lancés par une PR ne tournent que sur les PR vers main
 pr_vers_main() { # le bloc « pull_request: » est suivi de « branches: [main] »
   grep -A1 '^  pull_request:' "$1" | grep -q 'branches: \[main\]'

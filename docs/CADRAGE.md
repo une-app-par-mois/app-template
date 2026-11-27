@@ -54,6 +54,8 @@ Les parties du code où une erreur touche les données, la sécurité ou l'exact
 - **Format** : [PWA hors ligne | desktop | Android | CLI | extension]
 - **Stack envisagée** : [ ] — pourquoi ce choix : [ ]
 - **Mode de CI** : [par ticket | par groupe | par jalon] — par défaut par jalon ; par ticket si la CI est courte et qu'on veut chaque fusion vérifiée (`CLAUDE.md`, « Mode de CI »)
+- **Lieu de la CI** : [GitHub Actions | local] — GitHub Actions pour un dépôt public (minutes gratuites) ; local pour un dépôt privé qui ne veut pas payer de minutes (`scripts/ci-local.sh`)
+- **Lieu de la release** : [GitHub Actions | local] — GitHub Actions garde l'attestation de provenance ; local (`scripts/release-local.sh`) n'a que les SHA-256
 
 ## Critères de réussite
 
