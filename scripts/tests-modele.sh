@@ -62,6 +62,33 @@ done
 ci_sans_outils() { PATH="$doublons:$PATH" scripts/ci-local.sh; }
 verifier "ci-local : échec tant que test.sh n'est pas défini" 1 ci_sans_outils
 rm -rf "$doublons"
+ordre_semgrep() { # Semgrep avant test.sh, sans appel de version
+  local s t
+  s=$(grep -n '^  etape "Analyse statique (Semgrep)"' scripts/ci-local.sh | head -1 | cut -d: -f1)
+  t=$(grep -n '^etape "Tests (scripts/test.sh)"' scripts/ci-local.sh | head -1 | cut -d: -f1)
+  [ -n "$s" ] && [ -n "$t" ] && [ "$s" -lt "$t" ] &&
+    grep -q 'SEMGREP_ENABLE_VERSION_CHECK=0 semgrep scan' scripts/ci-local.sh
+}
+verifier "ci-local : Semgrep en premier, sans appel de version" 0 ordre_semgrep
+
+# Commit de départ de Semgrep, dans un clone jetable : un commit vide après le commit cloné
+# (qui devient un ancêtre valide), et un commit sans parent (qui n'est pas un ancêtre).
+clone=$(mktemp -d)
+git clone -q . "$clone"
+export GIT_AUTHOR_NAME=modele GIT_AUTHOR_EMAIL=modele@example.invalid
+export GIT_COMMITTER_NAME=modele GIT_COMMITTER_EMAIL=modele@example.invalid
+ancetre=$(git -C "$clone" rev-parse HEAD)
+git -C "$clone" commit -q --allow-empty -m "Modèle : commit de test"
+tete=$(git -C "$clone" rev-parse HEAD)
+orphelin=$(git -C "$clone" commit-tree -m "Modèle : orphelin" "$tete^{tree}")
+depart() { (cd "$clone" && printf '%s\n' "$1" >.semgrep-baseline && scripts/semgrep-depart.sh >/dev/null); }
+sans_fichier() { (cd "$clone" && rm -f .semgrep-baseline && [ -z "$(scripts/semgrep-depart.sh)" ]); }
+verifier "semgrep-depart : sans fichier, aucun départ" 0 sans_fichier
+verifier "semgrep-depart : ancêtre accepté" 0 depart "$ancetre"
+verifier "semgrep-depart : sha mal formé refusé" 1 depart "pas-un-sha"
+verifier "semgrep-depart : HEAD lui-même refusé" 1 depart "$tete"
+verifier "semgrep-depart : commit hors de l'historique refusé" 1 depart "$orphelin"
+rm -rf "$clone"
 verifier "release-local : tag mal formé refusé" 2 scripts/release-local.sh 1.0
 # Réseau requis : interroge origin.
 verifier "release-local : tag non poussé refusé" 3 scripts/release-local.sh v0.0.999

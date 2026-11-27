@@ -75,6 +75,7 @@ Lieu de la CI : **[GitHub Actions | local]** ; lieu de la release : **[GitHub Ac
 
 - **GitHub Actions** : `ci.yml` et `security.yml` tournent sur la PR vers `main`.
 - **Local** (dépôt privé, pour ne pas payer de minutes) : `ci.yml` et `security.yml` sont supprimés ; `./scripts/ci-local.sh --publish` lance les mêmes contrôles sur `HEAD` (qui doit être poussé : c'est le dernier commit de la PR), dans un worktree propre, et dépose le statut de commit `ci-local` ; `./scripts/ci-local.sh --verify <sha>` le vérifie avant chaque fusion.
+- **CodeQL** : gratuit sur un dépôt **public** seulement ; sur un dépôt privé, ses conditions l'interdisent sans licence GitHub Advanced Security (payante). Dépôt privé : ajouter à Semgrep les règles du langage (`regles_semgrep` dans `scripts/ci-local.sh` en CI locale ; l'étape Semgrep de `security.yml` si le dépôt garde GitHub Actions).
 - **Release locale** : `release.yml` est supprimé ; `./scripts/release-local.sh vX.Y.Z` construit sur le poste et publie avec les SHA-256, **sans attestation de provenance**.
 
 La branche de groupe ou de jalon part de `main`. Les workflows ne tournent que sur les PR vers `main`. En zone sensible, le ticket reste dans son groupe, avec `/security-review` et la relecture du porteur avant sa fusion dans le groupe.
@@ -98,7 +99,7 @@ Messages de commit en français, « `Domaine : ce qui change` », 72 caractères
 - Toute règle tirée d'une exigence cite son identifiant dans le code et dans le nom du test (`F-03`).
 - Pas de code mort, pas de `TODO` sans numéro de ticket, fichiers de 300 lignes au plus.
 - Écrire un code que je peux comprendre et expliquer.
-- Ne pas modifier `.github/workflows/`, `.claude/`, `scripts/hooks/`, `LICENSE`, `SECURITY.md` ni ce fichier sans me le demander.
+- Ne pas modifier `.github/workflows/`, `.claude/`, `scripts/hooks/`, `.semgrep-baseline`, `LICENSE`, `SECURITY.md` ni ce fichier sans me le demander.
 - Les idées hors périmètre vont dans `docs/IDEES.md`, jamais directement dans le code.
 
 ## Journal

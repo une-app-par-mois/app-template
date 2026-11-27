@@ -16,7 +16,7 @@ Date : [AAAA-MM-JJ] · Commit audité : `[hash]`
 ## Méthode
 
 1. **Audit par IA en posture d'attaquant** : nouvelle session Claude Code (ou sous-agent), qui n'a pas écrit le code, avec le prompt de référence ci-dessous.
-2. **Outils automatiques** : Semgrep, CodeQL, gitleaks, audit des dépendances (`npm audit` ou `pip-audit`), lancés par le workflow `security.yml` (CI locale : par `scripts/ci-local.sh` ; CodeQL n'y est pas, il reste un réglage GitHub).
+2. **Outils automatiques** : Semgrep, CodeQL, gitleaks, audit des dépendances (`npm audit` ou `pip-audit`), lancés par le workflow `security.yml` (CI locale : par `scripts/ci-local.sh` ; CodeQL n'y est pas, il reste un réglage GitHub). **CodeQL : dépôt public seulement** (licence) ; dépôt privé : Semgrep avec les règles du langage, et la ligne CodeQL ci-dessous est retirée.
 3. **Audit fonctionnel** : cas limites, erreurs, accessibilité.
 4. **Revue humaine** : relecture des diffs et des points signalés.
 5. **Test hors ligne** : l'app est lancée sur une machine dont le réseau est coupé.
