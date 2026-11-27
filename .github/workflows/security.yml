@@ -1,5 +1,8 @@
 # Contrôles de sécurité automatiques : secrets, analyse statique, dépendances.
 # CodeQL n'est pas ici : il est activé en « default setup » dans les réglages de l'organisation.
+# Dépôt public seulement : ses conditions interdisent « any codebase that is not an Open Source
+# Codebase (e.g., code in a private repo in GitHub) » sans licence GitHub Advanced Security.
+# Dépôt privé : ajouter à Semgrep les règles du langage (p/javascript, p/typescript, p/python…).
 name: Sécurité
 
 on:
@@ -50,6 +53,8 @@ jobs:
       - name: Installer Semgrep (version figée)
         run: pip install "semgrep==1.184.0"
       - name: Semgrep — règles par défaut et OWASP Top 10
+        env:
+          SEMGREP_ENABLE_VERSION_CHECK: "0" # --metrics=off ne coupe pas l'appel de version
         run: >-
           semgrep scan
           --config p/default --config p/owasp-top-ten

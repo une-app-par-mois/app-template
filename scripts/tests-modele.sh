@@ -62,6 +62,13 @@ done
 ci_sans_outils() { PATH="$doublons:$PATH" scripts/ci-local.sh; }
 verifier "ci-local : échec tant que test.sh n'est pas défini" 1 ci_sans_outils
 rm -rf "$doublons"
+ordre_semgrep() { # Semgrep avant test.sh, sans appel de version
+  local s t
+  s=$(grep -n 'etape "Analyse statique (Semgrep)"' scripts/ci-local.sh | cut -d: -f1)
+  t=$(grep -n 'etape "Tests (scripts/test.sh)"' scripts/ci-local.sh | cut -d: -f1)
+  [ -n "$s" ] && [ -n "$t" ] && [ "$s" -lt "$t" ] && grep -q 'SEMGREP_ENABLE_VERSION_CHECK=0 semgrep scan' scripts/ci-local.sh
+}
+verifier "ci-local : Semgrep en premier, sans appel de version" 0 ordre_semgrep
 verifier "release-local : tag mal formé refusé" 2 scripts/release-local.sh 1.0
 # Réseau requis : interroge origin.
 verifier "release-local : tag non poussé refusé" 3 scripts/release-local.sh v0.0.999

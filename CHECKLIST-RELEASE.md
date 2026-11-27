@@ -10,7 +10,7 @@
 
 ## Sécurité
 - [ ] Workflow `security.yml` au vert (Semgrep, gitleaks, dépendances).
-- [ ] CodeQL sans alerte ouverte de gravité élevée ou critique.
+- [ ] CodeQL sans alerte ouverte de gravité élevée ou critique (dépôt public ; dépôt privé : sans objet, Semgrep avec les règles du langage).
 - [ ] Audit IA en posture d'attaquant fait dans une session séparée (ou un sous-agent qui n'a pas écrit le code), avec le prompt de `AUDIT.md`.
 - [ ] Les zones sensibles du cadrage ont été relues par le porteur.
 - [ ] `AUDIT.md` à jour : problèmes, corrections, limites.

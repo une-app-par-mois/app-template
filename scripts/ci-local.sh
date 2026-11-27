@@ -15,6 +15,9 @@
 set -euo pipefail
 
 CONTEXTE="ci-local"
+# Règles Semgrep. Dépôt privé (CodeQL interdit sans licence payante) : ajouter celles du
+# langage, par exemple --config p/javascript --config p/typescript --config p/nodejs, ou p/python.
+regles_semgrep=(--config p/default --config p/owasp-top-ten)
 usage() {
   echo "usage : $0 [--publish | --verify <sha de 40 caractères>]" >&2
   exit 2
@@ -93,10 +96,25 @@ etape() { # etape <libellé> <commande...> : lance la commande, note le résulta
   fi
 }
 
+# Semgrep d'abord, sur la copie intacte : --baseline-commit refuse des modifications en cours,
+# que test.sh peut laisser. --metrics=off ne coupe pas l'appel de version : la variable le fait.
+# Code hérité avec beaucoup d'alertes : écrire le commit de départ dans .semgrep-baseline ;
+# seules les alertes nouvelles bloquent alors, les anciennes sont listées et auditées (ticket).
+# Après une fusion par --squash, le commit de départ n'est plus un ancêtre : le remplacer par
+# le commit de fusion.
+semgrep_depart=()
+if [ -f .semgrep-baseline ]; then
+  depart=$(tr -d '[:space:]' <.semgrep-baseline)
+  if ! [[ "$depart" =~ ^[0-9a-f]{40}$ ]] || ! git merge-base --is-ancestor "$depart" HEAD; then
+    echo "❌ .semgrep-baseline doit contenir le sha complet d'un ancêtre de HEAD." >&2
+    exit 2
+  fi
+  semgrep_depart=(--baseline-commit "$depart")
+fi
+etape "Analyse statique (Semgrep)" env SEMGREP_ENABLE_VERSION_CHECK=0 semgrep scan \
+  "${regles_semgrep[@]}" --metrics=off --error ${semgrep_depart[@]+"${semgrep_depart[@]}"}
 etape "Tests (scripts/test.sh)" ./scripts/test.sh
 etape "Secrets dans tout l'historique (gitleaks)" gitleaks git --redact .
-etape "Analyse statique (Semgrep)" semgrep scan --config p/default --config p/owasp-top-ten \
-  --metrics=off --error
 if [ -f package-lock.json ]; then
   etape "Dépendances Node (npm audit, niveau élevé)" npm audit --audit-level=high
 fi
