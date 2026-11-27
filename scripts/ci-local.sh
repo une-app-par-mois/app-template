@@ -115,6 +115,9 @@ else
 fi
 etape "Tests (scripts/test.sh)" ./scripts/test.sh
 etape "Secrets dans tout l'historique (gitleaks)" gitleaks git --redact .
+if [ -f package.json ]; then
+  etape "Scripts d'installation npm désactivés" ./scripts/scripts-installation.sh
+fi
 if [ -f package-lock.json ]; then
   etape "Dépendances Node (npm audit, niveau élevé)" npm audit --audit-level=high
 fi

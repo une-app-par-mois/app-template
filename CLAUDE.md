@@ -44,6 +44,7 @@ Ce fichier est lu par Claude Code à chaque session. Il fixe le contexte et les 
 - Données personnelles : collecter le minimum, stocker localement, chiffrer au repos si elles sont sensibles, permettre l'export et la suppression.
 - Principe du moindre privilège : permissions système, d'extension ou Android réduites au strict nécessaire, chacune justifiée dans le README.
 - Avant d'ajouter une dépendance : me la proposer avec sa raison, sa licence et sa date de dernière mise à jour, après avoir vérifié qu'elle existe sous ce nom exact (une IA peut inventer un nom de paquet).
+- Aucun script d'installation de paquet : `.npmrc` fixe `ignore-scripts=true` et `min-release-age=7` ; un paquet à script d'installation est revu (`scripts/scripts-installation-revus.txt`, relecture du porteur). `ignore-scripts` saute aussi les scripts `prepare`, `pre*` et `post*` du projet : le contrôle les refuse, les lancer explicitement. Python : préférer les wheels (`pip install --only-binary=:all:`).
 - **Ne désactive ni n'affaiblis jamais un contrôle** pour faire passer du code : test, lint, typage, hook (`--no-verify` interdit), workflow de sécurité.
 
 ### Données
@@ -99,7 +100,7 @@ Messages de commit en français, « `Domaine : ce qui change` », 72 caractères
 - Toute règle tirée d'une exigence cite son identifiant dans le code et dans le nom du test (`F-03`).
 - Pas de code mort, pas de `TODO` sans numéro de ticket, fichiers de 300 lignes au plus.
 - Écrire un code que je peux comprendre et expliquer.
-- Ne pas modifier `.github/workflows/`, `.claude/`, `scripts/hooks/`, `.semgrep-baseline`, `LICENSE`, `SECURITY.md` ni ce fichier sans me le demander.
+- Ne pas modifier `.github/workflows/`, `.claude/`, `scripts/hooks/`, `.semgrep-baseline`, `.npmrc`, `scripts/scripts-installation-revus.txt`, `LICENSE`, `SECURITY.md` ni ce fichier sans me le demander.
 - Les idées hors périmètre vont dans `docs/IDEES.md`, jamais directement dans le code.
 
 ## Journal

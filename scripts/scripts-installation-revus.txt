@@ -1,0 +1,3 @@
+# Paquets dont le script d'installation est connu et inutile : « nom@version  raison ».
+# Clé nom@version : une nouvelle version peut apporter un nouveau script, elle se revoit.
+# Contrôlé par scripts/scripts-installation.sh. Ajouter une ligne : relecture du porteur.
